@@ -1,4 +1,4 @@
-package com.example.parstagram;
+package com.example.parstagram.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +14,7 @@ import com.example.parstagram.databinding.ActivityLoginBinding;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -65,7 +66,24 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleSignup() {
-        ParseUser.
+        String username = etUsername.getText().toString();
+        String password = etPassword.getText().toString();
+
+        ParseUser newUser = new ParseUser();
+        newUser.setUsername(username);
+        newUser.setPassword(password);
+        newUser.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Failed to sign up user.", e);
+                    Toast.makeText(LoginActivity.this, "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.i(TAG, "Successfully signed up user.");
+                    gotoMainActivity();
+                }
+            }
+        });
     }
 
     private void setupLoginButton() {

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
+    tools:context=".activities.LoginActivity"
     android:id="@+id/rlRoot">
 
     <ImageView
@@ -18,7 +18,7 @@
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/std_height"
         android:layout_below="@id/ivInstagramLogo"
         android:hint="@string/username"
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -29,7 +29,7 @@
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/std_height"
         android:layout_below="@id/etUsername"
         android:hint="@string/password"
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -42,7 +42,7 @@
     <Button
         android:id="@+id/btLogin"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/std_height"
         android:layout_below="@id/etPassword"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -54,7 +54,7 @@
     <Button
         android:id="@+id/btSignup"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/std_height"
         android:layout_below="@id/btLogin"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
