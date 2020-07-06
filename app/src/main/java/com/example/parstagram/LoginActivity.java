@@ -35,6 +35,10 @@ public class LoginActivity extends AppCompatActivity {
         rootView = binding.getRoot();
         setContentView(rootView);
 
+        if (ParseUser.getCurrentUser() != null) {
+            gotoMainActivity();
+        }
+
         bindElements();
         setupButtons();
     }
@@ -61,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleSignup() {
+        ParseUser.
     }
 
     private void setupLoginButton() {
