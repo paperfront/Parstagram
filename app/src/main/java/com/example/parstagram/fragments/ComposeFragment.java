@@ -221,17 +221,5 @@ public class ComposeFragment extends Fragment {
         });
     }
 
-    private void queryPosts() {
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> objects, ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "Error with query", e);
-                } else {
-                    Log.i(TAG, "Query successful.");
-                }
-            }
-        });
-    }
+
 }

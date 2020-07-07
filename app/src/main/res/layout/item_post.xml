@@ -3,33 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/rlTop"
         android:layout_width="match_parent"
         android:layout_height="@dimen/std_height"
         android:layout_margin="16dp">
+
         <ImageView
             android:id="@+id/ivProfilePicture"
             android:layout_width="@dimen/std_height"
             android:layout_height="@dimen/std_height"
-            tools:srcCompat="@tools:sample/avatars"
-            >
-        </ImageView>
+            tools:srcCompat="@tools:sample/avatars"></ImageView>
 
         <TextView
             android:id="@+id/tvUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/ivProfilePicture"
             android:gravity="center_vertical"
-            android:layout_centerInParent="true"
-            tools:text="paperfront"
-            >
-        </TextView>
+            tools:text="paperfront"></TextView>
     </RelativeLayout>
 
     <ImageView
@@ -37,48 +33,41 @@
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_below="@id/rlTop"
-        android:layout_marginTop="8dp">
-    </ImageView>
-    
+        android:layout_marginTop="8dp"></ImageView>
+
     <RelativeLayout
         android:id="@+id/rlComments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ivMainImage"
-        android:layout_margin="16dp"
-        >
+        android:layout_margin="16dp">
 
         <LinearLayout
             android:id="@+id/llButtons"
-            android:layout_width="@dimen/triple_std_height"
-            android:layout_height="40dp"
-            >
+            android:layout_width="140dp"
+            android:layout_height="40dp">
 
             <Button
                 android:id="@+id/btLike"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@mipmap/ufi_heart"
-                >
-            </Button>
+                android:background="@mipmap/ufi_heart"></Button>
+
             <Button
                 android:id="@+id/btComment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_marginHorizontal="4dp"
-                android:background="@mipmap/ufi_comment"
-                >
-            </Button>
+                android:layout_weight="1"
+                android:background="@mipmap/ufi_comment"></Button>
+
             <Button
                 android:id="@+id/btSend"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@mipmap/ufi_new_direct"
-                >
-            </Button>
+                android:background="@mipmap/ufi_new_direct"></Button>
 
         </LinearLayout>
 
@@ -87,15 +76,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/llButtons"
             android:layout_marginTop="8dp">
+
             <TextView
-                android:id="@+id/etDescription"
+                android:id="@+id/tvDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                tools:text="paperfront - this is a description">
-            </TextView>
+                tools:text="paperfront - this is a description"></TextView>
         </LinearLayout>
-        
+
     </RelativeLayout>
-    
+
 
 </RelativeLayout>
