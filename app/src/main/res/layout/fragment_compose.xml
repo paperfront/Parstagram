@@ -42,5 +42,13 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="@string/submit"></Button>
 
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btSubmit"
+        android:layout_centerInParent="true"/>
+
 
 </RelativeLayout>

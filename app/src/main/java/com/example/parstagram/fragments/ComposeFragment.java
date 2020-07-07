@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.parstagram.helpers.ImageUtils;
@@ -51,6 +52,7 @@ public class ComposeFragment extends Fragment {
     private Button btTakePicture;
     private Button btSubmit;
     private ImageView ivPicture;
+    private ProgressBar pbLoading;
 
     private File photoFile;
 
@@ -95,6 +97,7 @@ public class ComposeFragment extends Fragment {
         btTakePicture = binding.btTakePicture;
         btSubmit = binding.btSubmit;
         ivPicture = binding.ivPicture;
+        pbLoading = binding.pbLoading;
     }
 
     private void setupButtons() {
@@ -163,6 +166,7 @@ public class ComposeFragment extends Fragment {
 
 
     private void handleSubmit() {
+        pbLoading.setVisibility(View.VISIBLE);
         String description = etDescription.getText().toString();
         if (description.isEmpty()) {
             Toast.makeText(getContext(), "Description is empty.", Toast.LENGTH_SHORT).show();
@@ -186,6 +190,7 @@ public class ComposeFragment extends Fragment {
         post.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
+                pbLoading.setVisibility(View.INVISIBLE);
                 if (e != null) {
                     Log.e(TAG, "Failed to save post", e);
                     Toast.makeText(getContext(), "Failed to save post", Toast.LENGTH_SHORT).show();
@@ -193,6 +198,7 @@ public class ComposeFragment extends Fragment {
                     Log.i(TAG, "Successfully saved post.");
                     Toast.makeText(getContext(), "Successfully made post!", Toast.LENGTH_SHORT).show();
                     etDescription.setText("");
+                    ivPicture.setImageDrawable(null);
                 }
             }
         });
