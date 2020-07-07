@@ -19,6 +19,8 @@ import com.example.parstagram.R;
 import com.example.parstagram.databinding.ItemPostBinding;
 import com.example.parstagram.helpers.ParseRelativeDate;
 import com.example.parstagram.models.Post;
+import com.example.parstagram.models.User;
+import com.parse.ParseFile;
 
 public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> {
 
@@ -85,8 +87,13 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         }
 
         private void bind(Post currentPost) {
+            if (!currentPost.getAuthor().has(User.KEY_PROFILE_PICTURE)) {
+                ImageUtils.loadDefaultProfilePic(context, ivProfilePicture);
+            } else {
+                ImageUtils.loadImages((ParseFile) currentPost.getAuthor().get(User.KEY_PROFILE_PICTURE),
+                        ivProfilePicture);
+            }
             ImageUtils.loadImages(currentPost.getImage(), ivMainPicture);
-            ivProfilePicture.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground));
             String descriptionString = "<b>" + currentPost.getAuthor().getUsername() + "</b> : " + currentPost.getDescription();
             tvDescription.setText(Html.fromHtml(descriptionString));
             tvUsername.setText(currentPost.getAuthor().getUsername());

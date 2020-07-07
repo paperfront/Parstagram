@@ -1,6 +1,10 @@
 package com.example.parstagram.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,13 +23,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
 import com.example.parstagram.activities.LoginActivity;
 import com.example.parstagram.adapters.PostAdapter;
 import com.example.parstagram.databinding.FragmentHomeBinding;
 import com.example.parstagram.databinding.FragmentProfileBinding;
 import com.example.parstagram.databinding.TextviewCounterBinding;
+import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.models.Post;
+import com.example.parstagram.models.User;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.util.List;
@@ -119,7 +128,13 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupImage() {
-        ivProfilePicture.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_launcher_foreground));
+        if (currentUser.has(User.KEY_PROFILE_PICTURE)) {
+            ParseFile profileFile = (ParseFile) currentUser.get(User.KEY_PROFILE_PICTURE);
+            ImageUtils.loadImages(profileFile, ivProfilePicture);
+        } else {
+            ImageUtils.loadDefaultProfilePic(getContext(), ivProfilePicture);
+        }
+
     }
 
     private void setupButtons() {

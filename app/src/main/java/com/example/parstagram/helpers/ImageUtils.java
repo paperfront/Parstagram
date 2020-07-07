@@ -3,10 +3,12 @@ package com.example.parstagram.helpers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -52,5 +54,11 @@ public class ImageUtils {
         File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
 
         return file;
+    }
+
+    public static void loadDefaultProfilePic(Context context, ImageView iv) {
+        int drawableId = context.getResources().getIdentifier("default_profile", "drawable", context.getPackageName());
+        Drawable drawable = context.getDrawable(drawableId);
+        Glide.with(context).load(drawable).circleCrop().into(iv);
     }
 }
