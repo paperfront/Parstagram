@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.ActivityMainBinding;
 import com.example.parstagram.fragments.ComposeFragment;
+import com.example.parstagram.fragments.HomeFragment;
 import com.example.parstagram.models.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     final FragmentManager fragmentManager = getSupportFragmentManager();
     final Fragment composeFragment = ComposeFragment.newInstance();
+    final Fragment homeFragment = HomeFragment.newInstance();
 
 
     private ActivityMainBinding binding;
@@ -79,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.action_home:
-                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
-                        fragment = composeFragment;
+                        fragment = homeFragment;
                         break;
                     case R.id.action_post:
                         fragment = composeFragment;
@@ -91,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     default:
                         Log.e(TAG, "Navigation item clicked does not have a case. Setting clicked item to home...");
-                        //todo set fragment to home fragment
-                        fragment = composeFragment;
+                        fragment = homeFragment;
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
