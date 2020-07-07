@@ -24,4 +24,5 @@
     <string name="posts">Posts</string>
     <string name="following">Following</string>
     <string name="followers">Followers</string>
+    <string name="view_comments">View comments</string>
 </resources>

@@ -10,12 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.parstagram.ImageUtils;
 import com.example.parstagram.databinding.ActivityLoginBinding;
 import com.example.parstagram.models.User;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 

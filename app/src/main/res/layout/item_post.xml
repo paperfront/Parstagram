@@ -73,11 +73,12 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@mipmap/ufi_new_direct"></Button>
+                    android:background="@mipmap/ufi_new_direct" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/llDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/llButtons"
@@ -86,10 +87,25 @@
                 <TextView
                     android:id="@+id/tvDescription"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    tools:text="paperfront - this is a description"></TextView>
+                    android:layout_height="wrap_content"
+                    tools:text="paperfront - this is a description" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/llDescription"
+                android:text="@string/view_comments"
+                android:textColor="@android:color/tertiary_text_light" />
+
+            <TextView
+                android:id="@+id/tvTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvComments"
+                tools:text="6h ago"
+                android:textColor="@android:color/tertiary_text_light"/>
         </RelativeLayout>
 
 

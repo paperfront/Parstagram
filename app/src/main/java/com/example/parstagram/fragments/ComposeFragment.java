@@ -1,6 +1,5 @@
 package com.example.parstagram.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,12 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.paging.LivePagedListBuilder;
-import androidx.paging.PagedList;
 
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,21 +21,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.parstagram.ImageUtils;
+import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.R;
-import com.example.parstagram.activities.MainActivity;
 import com.example.parstagram.databinding.FragmentComposeBinding;
-import com.example.parstagram.models.ParseDataSourceFactory;
 import com.example.parstagram.models.Post;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 

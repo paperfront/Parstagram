@@ -1,4 +1,4 @@
-package com.example.parstagram;
+package com.example.parstagram.helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.example.parstagram.R;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;

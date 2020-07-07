@@ -1,6 +1,5 @@
 package com.example.parstagram.adapters;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -11,18 +10,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.parstagram.ImageUtils;
+import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.ItemPostBinding;
+import com.example.parstagram.helpers.ParseRelativeDate;
 import com.example.parstagram.models.Post;
-
-import java.util.List;
 
 public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> {
 
@@ -74,6 +70,8 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         private ImageView ivMainPicture;
         private TextView tvUsername;
         private TextView tvDescription;
+        private TextView tvComments;
+        private TextView tvTimestamp;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,6 +80,8 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             ivMainPicture = binding.ivMainImage;
             tvUsername = binding.tvUsername;
             tvDescription = binding.tvDescription;
+            tvComments = binding.tvComments;
+            tvTimestamp = binding.tvTimestamp;
         }
 
         private void bind(Post currentPost) {
@@ -90,6 +90,8 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             String descriptionString = "<b>" + currentPost.getAuthor().getUsername() + "</b> : " + currentPost.getDescription();
             tvDescription.setText(Html.fromHtml(descriptionString));
             tvUsername.setText(currentPost.getAuthor().getUsername());
+            tvTimestamp.setText(ParseRelativeDate.getRelativeTimeAgo(currentPost.getCreatedAt().toString()));
+
         }
     }
 }
