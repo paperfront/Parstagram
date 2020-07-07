@@ -2,6 +2,7 @@ package com.example.parstagram.adapters;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         private void bind(Post currentPost) {
             ImageUtils.loadImages(currentPost.getImage(), ivMainPicture);
             ivProfilePicture.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground));
-            tvDescription.setText(currentPost.getDescription());
+            String descriptionString = "<b>" + currentPost.getAuthor().getUsername() + "</b> : " + currentPost.getDescription();
+            tvDescription.setText(Html.fromHtml(descriptionString));
             tvUsername.setText(currentPost.getAuthor().getUsername());
         }
     }
