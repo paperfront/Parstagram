@@ -11,6 +11,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.paging.PagedList;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parstagram.ImageUtils;
@@ -20,18 +24,32 @@ import com.example.parstagram.models.Post;
 
 import java.util.List;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> {
 
-
-    private List<Post> posts;
     private Context context;
     private ItemPostBinding binding;
 
+    public static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<Post>() {
+                @Override
+                public boolean areItemsTheSame(Post oldItem, Post newItem) {
+                    return oldItem.getObjectId() == newItem.getObjectId();
+                }
+                @Override
+                public boolean areContentsTheSame(Post oldItem, Post newItem) {
+                    return false;
+                }
+            };
 
-    public PostAdapter(Context context, List<Post> posts) {
-        this.context = context;
-        this.posts = posts;
+    public PostAdapter(){
+        super(DIFF_CALLBACK);
     }
+
+    public PostAdapter(Context context) {
+        super(DIFF_CALLBACK);
+        this.context = context;
+    }
+
 
     @NonNull
     @Override
@@ -42,12 +60,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(posts.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return posts.size();
+        Post post = getItem(position);
+        if (post == null) {
+            return;
+        }
+        holder.bind(post);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

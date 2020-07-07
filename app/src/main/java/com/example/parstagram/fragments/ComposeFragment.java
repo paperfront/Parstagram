@@ -1,5 +1,6 @@
 package com.example.parstagram.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,9 +27,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.parstagram.ImageUtils;
 import com.example.parstagram.R;
 import com.example.parstagram.activities.MainActivity;
 import com.example.parstagram.databinding.FragmentComposeBinding;
+import com.example.parstagram.models.ParseDataSourceFactory;
 import com.example.parstagram.models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -44,11 +51,6 @@ import static android.app.Activity.RESULT_OK;
  * create an instance of this fragment.
  */
 public class ComposeFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     private FragmentComposeBinding binding;
     public static final String TAG = "ComposeFragment";
@@ -132,6 +134,8 @@ public class ComposeFragment extends Fragment {
 
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -151,7 +155,7 @@ public class ComposeFragment extends Fragment {
 
     private void launchCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        photoFile = getPhotoFileUri(PHOTO_FILENAME);
+        photoFile = ImageUtils.getPhotoFileUri(getContext(), PHOTO_FILENAME);
         Uri fileProvider = FileProvider.getUriForFile(getContext(),
                 "com.codepath.fileprovider.parstagram", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
@@ -164,23 +168,7 @@ public class ComposeFragment extends Fragment {
         }
     }
 
-    // Returns the File for a photo stored on disk given the fileName
-    public File getPhotoFileUri(String fileName) {
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
 
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(TAG, "failed to create directory");
-        }
-
-        // Return the file target for the photo based on filename
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-
-        return file;
-    }
 
 
 

@@ -5,6 +5,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,6 +21,7 @@ import android.view.ViewGroup;
 import com.example.parstagram.R;
 import com.example.parstagram.adapters.PostAdapter;
 import com.example.parstagram.databinding.FragmentHomeBinding;
+import com.example.parstagram.models.ParseDataSourceFactory;
 import com.example.parstagram.models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -35,7 +40,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private RecyclerView rvFeed;
     private SwipeRefreshLayout swipeContainer;
-    private List<Post> posts;
+    private LiveData<PagedList<Post>> posts;
     private PostAdapter adapter;
 
 
@@ -107,12 +112,31 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRV() {
-        posts = new ArrayList<>();
-        adapter = new PostAdapter(getContext(), posts);
+        adapter = new PostAdapter(getContext());
+        setupData();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rvFeed.setAdapter(adapter);
         rvFeed.setLayoutManager(layoutManager);
-        queryPosts();
+    }
+
+    private void setupData() {
+        PagedList.Config pagedListConfig =
+                new PagedList.Config.Builder().setEnablePlaceholders(true)
+                        .setPrefetchDistance(10)
+                        .setInitialLoadSizeHint(10)
+                        .setPageSize(10).build();
+
+
+        ParseDataSourceFactory sourceFactory = new ParseDataSourceFactory();
+
+        posts = new LivePagedListBuilder(sourceFactory, pagedListConfig).build();
+
+        posts.observe(getActivity(), new Observer<PagedList<Post>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Post> postList) {
+                adapter.submitList(postList);
+            }
+        });
     }
 
     private void queryPosts() {
@@ -126,8 +150,6 @@ public class HomeFragment extends Fragment {
                     Log.e(TAG, "Error with query", e);
                 } else {
                     Log.i(TAG, "Query successful.");
-                    posts.clear();
-                    posts.addAll(objects);
                     adapter.notifyDataSetChanged();
                 }
             }

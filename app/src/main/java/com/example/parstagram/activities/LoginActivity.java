@@ -10,9 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.parstagram.ImageUtils;
 import com.example.parstagram.databinding.ActivityLoginBinding;
+import com.example.parstagram.models.User;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -72,6 +75,9 @@ public class LoginActivity extends AppCompatActivity {
         ParseUser newUser = new ParseUser();
         newUser.setUsername(username);
         newUser.setPassword(password);
+        newUser.put(User.KEY_DESCRIPTION, "");
+
+
         newUser.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
