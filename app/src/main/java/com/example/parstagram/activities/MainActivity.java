@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.ActivityMainBinding;
 import com.example.parstagram.models.Post;
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btTakePicture;
     private Button btSubmit;
     private ImageView ivPicture;
+    private BottomNavigationView bottomNavigation;
 
     private List<Post> posts;
     private File photoFile;
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         btTakePicture = binding.btTakePicture;
         btSubmit = binding.btSubmit;
         ivPicture = binding.ivPicture;
+        bottomNavigation = binding.bottomNavigation;
     }
 
     private void setupButtons() {
