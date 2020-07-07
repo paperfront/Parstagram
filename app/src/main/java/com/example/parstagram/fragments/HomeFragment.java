@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private RecyclerView rvFeed;
+    private SwipeRefreshLayout swipeContainer;
     private List<Post> posts;
     private PostAdapter adapter;
 
@@ -72,8 +74,36 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentHomeBinding.bind(view);
+
+        bindElements();
+        setupElements();
+    }
+
+    private void bindElements() {
         rvFeed = binding.rvFeed;
+        swipeContainer = binding.swipeContainer;
+    }
+
+    private void setupElements() {
         setupRV();
+        setupSwipeContainer();
+    }
+
+    private void setupSwipeContainer() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                queryPosts();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     private void setupRV() {
@@ -91,6 +121,7 @@ public class HomeFragment extends Fragment {
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
+                swipeContainer.setRefreshing(false);
                 if (e != null) {
                     Log.e(TAG, "Error with query", e);
                 } else {

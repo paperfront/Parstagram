@@ -26,6 +26,7 @@ import com.example.parstagram.R;
 import com.example.parstagram.databinding.ActivityMainBinding;
 import com.example.parstagram.fragments.ComposeFragment;
 import com.example.parstagram.fragments.HomeFragment;
+import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.models.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     final FragmentManager fragmentManager = getSupportFragmentManager();
     final Fragment composeFragment = ComposeFragment.newInstance();
     final Fragment homeFragment = HomeFragment.newInstance();
+    final Fragment profileFragment = ProfileFragment.newInstance();
 
 
     private ActivityMainBinding binding;
@@ -87,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = composeFragment;
                         break;
                     case R.id.action_profile:
-                        Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
-                        fragment = composeFragment;
+                        fragment = profileFragment;
                         break;
                     default:
                         Log.e(TAG, "Navigation item clicked does not have a case. Setting clicked item to home...");
