@@ -19,6 +19,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import java.io.ByteArrayOutputStream;
@@ -76,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
-        User newUser = new User();
+        final User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setDescription("");
@@ -86,21 +87,28 @@ public class LoginActivity extends AppCompatActivity {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] bitmapdata = stream.toByteArray();
-        newUser.setProfilePicture(new ParseFile(bitmapdata));
-
-
-        newUser.signUpInBackground(new SignUpCallback() {
-            @Override
+        final ParseFile file = new ParseFile(bitmapdata);
+        file.saveInBackground(new SaveCallback() {
             public void done(ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "Failed to sign up user.", e);
-                    Toast.makeText(LoginActivity.this, "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.i(TAG, "Successfully signed up user.");
-                    gotoMainActivity();
+                // If successful add file to user and signUpInBackground
+                if(null == e) {
+                    newUser.setProfilePicture(file);
+                    newUser.signUpInBackground(new SignUpCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Log.e(TAG, "Failed to sign up user.", e);
+                                Toast.makeText(LoginActivity.this, "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.i(TAG, "Successfully signed up user.");
+                                gotoMainActivity();
+                            }
+                        }
+                    });
                 }
             }
         });
+
     }
 
     private void setupLoginButton() {

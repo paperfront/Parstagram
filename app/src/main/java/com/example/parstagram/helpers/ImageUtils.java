@@ -25,7 +25,7 @@ public class ImageUtils {
 
     public static final String TAG = "ImageUtils";
 
-    public static void loadImages(final Context context, ParseFile thumbnail, final ImageView img) {
+    public static void loadImages(final Context context, final ParseFile thumbnail, final ImageView img) {
 
         if (thumbnail != null) {
             thumbnail.getDataInBackground(new GetDataCallback() {
@@ -35,6 +35,8 @@ public class ImageUtils {
                         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
                         Glide.with(context).load(bmp).into(img);
                     } else {
+                        Log.e(TAG, "Failed to decode image.", e);
+                        loadImages(context, thumbnail, img);
                     }
                 }
             });
