@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,6 +112,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         private TextView tvDescription;
         private TextView tvComments;
         private TextView tvTimestamp;
+        private Button btComment;
 
         private ItemPostBinding binding;
 
@@ -123,6 +125,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvDescription = binding.tvDescription;
             tvComments = binding.tvComments;
             tvTimestamp = binding.tvTimestamp;
+            btComment = binding.btComment;
         }
 
         void bind(final Post currentPost) {
@@ -153,7 +156,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
 
             tvComments.setText("View " + currentPost.getTotalComments() + " Comments");
 
-            tvComments.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener commentsListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     CommentsFragment fragment = CommentsFragment.newInstance();
@@ -165,7 +168,11 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                             .addToBackStack(null)
                             .commit();
                 }
-            });
+            };
+
+            btComment.setOnClickListener(commentsListener);
+            tvComments.setOnClickListener(commentsListener);
+
 
         }
     }
