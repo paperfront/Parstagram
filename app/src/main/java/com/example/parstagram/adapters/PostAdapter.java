@@ -140,7 +140,9 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvDescription.setText(Html.fromHtml(descriptionString));
             tvUsername.setText(currentPost.getAuthor().getUsername());
             tvTimestamp.setText(ParseRelativeDate.getRelativeTimeAgo(currentPost.getCreatedAt().toString()));
-            ivProfilePicture.setOnClickListener(new View.OnClickListener() {
+
+
+            View.OnClickListener profileListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ProfileFragment fragment = ProfileFragment.newInstance();
@@ -152,7 +154,10 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                             .addToBackStack(null)
                             .commit();
                 }
-            });
+            };
+
+            ivProfilePicture.setOnClickListener(profileListener);
+            tvUsername.setOnClickListener(profileListener);
 
             tvComments.setText("View " + currentPost.getTotalComments() + " Comments");
 
