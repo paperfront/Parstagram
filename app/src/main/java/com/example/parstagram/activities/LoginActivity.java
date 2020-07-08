@@ -3,6 +3,9 @@ package com.example.parstagram.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,8 +17,11 @@ import com.example.parstagram.databinding.ActivityLoginBinding;
 import com.example.parstagram.models.User;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+
+import java.io.ByteArrayOutputStream;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -74,6 +80,13 @@ public class LoginActivity extends AppCompatActivity {
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setDescription("");
+        int drawableId = getResources().getIdentifier("default_profile", "drawable", getPackageName());
+        Drawable d = getDrawable(drawableId);
+        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bitmapdata = stream.toByteArray();
+        newUser.setProfilePicture(new ParseFile(bitmapdata));
 
 
         newUser.signUpInBackground(new SignUpCallback() {
