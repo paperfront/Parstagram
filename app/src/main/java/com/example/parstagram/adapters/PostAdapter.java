@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parstagram.databinding.ItemPostGridBinding;
+import com.example.parstagram.fragments.CommentsFragment;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.R;
@@ -142,6 +143,22 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                     ProfileFragment fragment = ProfileFragment.newInstance();
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(ProfileFragment.KEY_PROFILE, currentPost.getAuthor());
+                    fragment.setArguments(bundle);
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+
+            tvComments.setText("View " + currentPost.getTotalComments() + " Comments");
+
+            tvComments.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    CommentsFragment fragment = CommentsFragment.newInstance();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(CommentsFragment.KEY_POST, currentPost);
                     fragment.setArguments(bundle);
                     activity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.flContainer, fragment)

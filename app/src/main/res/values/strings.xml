@@ -27,4 +27,6 @@
     <string name="view_comments">View comments</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="log_out">Log Out</string>
+    <string name="post">Post</string>
+    <string name="enter_comment">Enter comment...</string>
 </resources>

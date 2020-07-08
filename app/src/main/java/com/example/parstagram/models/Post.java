@@ -14,6 +14,7 @@ public class Post extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_AUTHOR = "author";
+    public static final String KEY_NUM_COMMENTS = "totalComments";
 
 
 
@@ -39,6 +40,17 @@ public class Post extends ParseObject {
 
     public void setAuthor(User user) {
         put(KEY_AUTHOR, user);
+    }
+
+    public void setTotalComments(int num) {
+        put(KEY_NUM_COMMENTS, num);
+    }
+
+    public int getTotalComments() {return getInt(KEY_NUM_COMMENTS); }
+
+    public void incrementComments() {
+        put(KEY_NUM_COMMENTS, 1 + getInt(KEY_NUM_COMMENTS));
+        saveInBackground();
     }
 
 }

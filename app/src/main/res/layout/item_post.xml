@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/llDescription"
                 android:text="@string/view_comments"
-                android:textColor="@android:color/tertiary_text_light" />
+                android:textColor="@color/cardview_shadow_start_color" />
 
             <TextView
                 android:id="@+id/tvTimestamp"
