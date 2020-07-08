@@ -5,7 +5,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,8 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.parstagram.R;
+import com.example.parstagram.adapters.CommentsAdapter;
+import com.example.parstagram.adapters.PostAdapter;
 import com.example.parstagram.databinding.FragmentCommentsBinding;
 import com.example.parstagram.models.Comment;
+import com.example.parstagram.models.CommentDataSourceFactory;
+import com.example.parstagram.models.ParseDataSourceFactory;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
 import com.parse.ParseException;
@@ -40,10 +50,14 @@ public class CommentsFragment extends Fragment {
     private RecyclerView rvComments;
     private Button btPost;
     private EditText etComment;
+    private SwipeRefreshLayout swipeContainer;
 
     private FragmentCommentsBinding binding;
 
     private Post currentPost;
+    private LiveData<PagedList<Comment>> comments;
+    private CommentsAdapter adapter;
+    private CommentDataSourceFactory factory;
 
     public CommentsFragment() {
         // Required empty public constructor
@@ -55,7 +69,6 @@ public class CommentsFragment extends Fragment {
      *
      * @return A new instance of fragment CommentsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CommentsFragment newInstance() {
         CommentsFragment fragment = new CommentsFragment();
         return fragment;
@@ -88,11 +101,48 @@ public class CommentsFragment extends Fragment {
         etComment = binding.etComment;
         btPost = binding.btPost;
         rvComments = binding.rvComments;
+        swipeContainer = binding.swipeContainer;
     }
 
     private void setupElements() {
         setupButtons();
         setupRV();
+        setupSwipeContainer();
+    }
+
+    private void setupSwipeContainer() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                factory.postLiveData.getValue().invalidate();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+    }
+
+    private void setupData() {
+        PagedList.Config pagedListConfig =
+                new PagedList.Config.Builder().setEnablePlaceholders(true)
+                        .setPrefetchDistance(10)
+                        .setInitialLoadSizeHint(10)
+                        .setPageSize(15).build();
+        factory = new CommentDataSourceFactory(currentPost);
+
+        comments = new LivePagedListBuilder(factory, pagedListConfig).build();
+        comments.observe(getActivity(), new Observer<PagedList<Comment>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Comment> commentList) {
+                adapter.submitList(commentList);
+                swipeContainer.setRefreshing(false);
+            }
+        });
     }
 
     private void setupButtons() {
@@ -126,12 +176,17 @@ public class CommentsFragment extends Fragment {
                     currentPost.incrementComments();
                     Toast.makeText(getContext(), "Successfully made comment!", Toast.LENGTH_SHORT).show();
                     etComment.setText("");
+                    factory.postLiveData.getValue().invalidate();
                 }
             }
         });
     }
 
     private void setupRV() {
-
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        adapter = new CommentsAdapter(getContext(), getActivity());
+        setupData();
+        rvComments.setLayoutManager(manager);
+        rvComments.setAdapter(adapter);
     }
 }
