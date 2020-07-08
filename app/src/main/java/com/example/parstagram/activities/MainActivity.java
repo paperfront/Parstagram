@@ -28,6 +28,7 @@ import com.example.parstagram.fragments.ComposeFragment;
 import com.example.parstagram.fragments.HomeFragment;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.models.Post;
+import com.example.parstagram.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private View rootView;
     private BottomNavigationView bottomNavigation;
 
-    private List<Post> posts;
 
 
     @Override
@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.action_profile:
                         fragment = profileFragment;
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(ProfileFragment.KEY_PROFILE, (User) ParseUser.getCurrentUser());
+                        fragment.setArguments(bundle);
                         break;
                     default:
                         Log.e(TAG, "Navigation item clicked does not have a case. Setting clicked item to home...");

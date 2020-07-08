@@ -1,11 +1,14 @@
 package com.example.parstagram.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 @ParseClassName("_User")
-public class User extends ParseUser {
+public class User extends ParseUser implements Parcelable {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_PROFILE_PICTURE = "profilePicture";
 

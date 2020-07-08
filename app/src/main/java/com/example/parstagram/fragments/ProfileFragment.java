@@ -56,6 +56,7 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
 
     public static final String TAG = "ProfileFragment";
+    public static final String KEY_PROFILE = "profile";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private static final String PHOTO_FILENAME = "profile.jpg";
 
@@ -94,6 +95,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        currentUser = getArguments().getParcelable(KEY_PROFILE);
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -113,7 +115,6 @@ public class ProfileFragment extends Fragment {
         postsBinding = binding.tvCounterPosts;
         followersBinding = binding.tvCounterFollowers;
         followingBinding = binding.tvCounterFollowing;
-        currentUser = (User) ParseUser.getCurrentUser();
     }
 
     private void setupElements() {
@@ -170,16 +171,23 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupButtons() {
-        btLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "Log out button clicked.");
-                ParseUser.logOut();
-                Intent i = new Intent(getContext(), LoginActivity.class);
-                startActivity(i);
-                getActivity().finish();
-            }
-        });
+
+        if (currentUser.hasSameId(ParseUser.getCurrentUser())) {
+            btLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i(TAG, "Log out button clicked.");
+                    ParseUser.logOut();
+                    Intent i = new Intent(getContext(), LoginActivity.class);
+                    startActivity(i);
+                    getActivity().finish();
+                }
+            });
+        } else {
+            btLogout.setVisibility(View.GONE);
+        }
+
+
     }
 
     @Override

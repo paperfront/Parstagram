@@ -23,11 +23,12 @@ import com.example.parstagram.adapters.PostAdapter;
 import com.example.parstagram.databinding.FragmentHomeBinding;
 import com.example.parstagram.models.ParseDataSourceFactory;
 import com.example.parstagram.models.Post;
+import com.example.parstagram.models.User;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class HomeFragment extends Fragment {
 
 
     public static final String TAG = "HomeFragment";
+    private ParseDataSourceFactory factory;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -101,7 +103,7 @@ public class HomeFragment extends Fragment {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                queryPosts();
+                factory.postLiveData.getValue().invalidate();
             }
         });
         // Configure the refreshing colors
@@ -112,7 +114,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRV() {
-        adapter = new PostAdapter(getContext());
+        adapter = new PostAdapter(getContext(), getActivity());
         setupData();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rvFeed.setAdapter(adapter);
@@ -125,16 +127,15 @@ public class HomeFragment extends Fragment {
                         .setPrefetchDistance(10)
                         .setInitialLoadSizeHint(10)
                         .setPageSize(10).build();
+        factory = new ParseDataSourceFactory();
 
-
-        ParseDataSourceFactory sourceFactory = new ParseDataSourceFactory();
-
-        posts = new LivePagedListBuilder(sourceFactory, pagedListConfig).build();
-
+        posts = new LivePagedListBuilder(factory, pagedListConfig).build();
+        swipeContainer.setRefreshing(true);
         posts.observe(getActivity(), new Observer<PagedList<Post>>() {
             @Override
             public void onChanged(@Nullable PagedList<Post> postList) {
                 adapter.submitList(postList);
+                swipeContainer.setRefreshing(false);
             }
         });
     }

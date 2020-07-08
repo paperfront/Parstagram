@@ -1,31 +1,36 @@
 package com.example.parstagram.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.ItemPostBinding;
 import com.example.parstagram.helpers.ParseRelativeDate;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
-import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> {
 
     private Context context;
     private ItemPostBinding binding;
+    private FragmentActivity activity;
 
     public static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Post>() {
@@ -43,9 +48,10 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         super(DIFF_CALLBACK);
     }
 
-    public PostAdapter(Context context) {
+    public PostAdapter(Context context, FragmentActivity activity) {
         super(DIFF_CALLBACK);
         this.context = context;
+        this.activity = activity;
     }
 
 
@@ -85,8 +91,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvComments = binding.tvComments;
             tvTimestamp = binding.tvTimestamp;
         }
-
-        private void bind(Post currentPost) {
+        private void bind(final Post currentPost) {
             if (!currentPost.getAuthor().has(User.KEY_PROFILE_PICTURE)) {
                 ImageUtils.loadDefaultProfilePic(context, ivProfilePicture);
             } else {
@@ -98,6 +103,19 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvDescription.setText(Html.fromHtml(descriptionString));
             tvUsername.setText(currentPost.getAuthor().getUsername());
             tvTimestamp.setText(ParseRelativeDate.getRelativeTimeAgo(currentPost.getCreatedAt().toString()));
+            ivProfilePicture.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ProfileFragment fragment = ProfileFragment.newInstance();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(ProfileFragment.KEY_PROFILE, currentPost.getAuthor());
+                    fragment.setArguments(bundle);
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
 
         }
     }
