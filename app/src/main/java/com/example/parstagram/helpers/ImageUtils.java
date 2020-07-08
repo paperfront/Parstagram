@@ -1,12 +1,17 @@
 package com.example.parstagram.helpers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
+
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
@@ -20,7 +25,7 @@ public class ImageUtils {
 
     public static final String TAG = "ImageUtils";
 
-    public static void loadImages(ParseFile thumbnail, final ImageView img) {
+    public static void loadImages(final Context context, ParseFile thumbnail, final ImageView img) {
 
         if (thumbnail != null) {
             thumbnail.getDataInBackground(new GetDataCallback() {
@@ -28,7 +33,7 @@ public class ImageUtils {
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
                         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        img.setImageBitmap(bmp);
+                        Glide.with(context).load(bmp).into(img);
                     } else {
                     }
                 }
@@ -37,6 +42,24 @@ public class ImageUtils {
             img.setImageResource(R.drawable.ic_launcher_background);
         }
     }// load image
+
+    public static void loadProfile(final Context context, ParseFile thumbnail, final ImageView img) {
+
+        if (thumbnail != null) {
+            thumbnail.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] data, ParseException e) {
+                    if (e == null) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        Glide.with(context).load(bmp).circleCrop().into(img);
+                    } else {
+                    }
+                }
+            });
+        } else {
+            img.setImageResource(R.drawable.ic_launcher_background);
+        }
+    }
 
     // Returns the File for a photo stored on disk given the fileName
     public static File getPhotoFileUri(Context context, String fileName) {
@@ -61,4 +84,5 @@ public class ImageUtils {
         Drawable drawable = context.getDrawable(drawableId);
         Glide.with(context).load(drawable).circleCrop().into(iv);
     }
+
 }

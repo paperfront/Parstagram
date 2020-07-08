@@ -90,10 +90,10 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             if (!currentPost.getAuthor().has(User.KEY_PROFILE_PICTURE)) {
                 ImageUtils.loadDefaultProfilePic(context, ivProfilePicture);
             } else {
-                ImageUtils.loadImages((ParseFile) currentPost.getAuthor().get(User.KEY_PROFILE_PICTURE),
+                ImageUtils.loadProfile(context, currentPost.getAuthor().getProfilePicture(),
                         ivProfilePicture);
             }
-            ImageUtils.loadImages(currentPost.getImage(), ivMainPicture);
+            ImageUtils.loadImages(context, currentPost.getImage(), ivMainPicture);
             String descriptionString = "<b>" + currentPost.getAuthor().getUsername() + "</b> : " + currentPost.getDescription();
             tvDescription.setText(Html.fromHtml(descriptionString));
             tvUsername.setText(currentPost.getAuthor().getUsername());

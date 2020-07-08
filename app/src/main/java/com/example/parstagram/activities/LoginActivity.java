@@ -70,10 +70,10 @@ public class LoginActivity extends AppCompatActivity {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
-        ParseUser newUser = new ParseUser();
+        User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
-        newUser.put(User.KEY_DESCRIPTION, "");
+        newUser.setDescription("");
 
 
         newUser.signUpInBackground(new SignUpCallback() {

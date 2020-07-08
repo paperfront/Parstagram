@@ -1,6 +1,28 @@
 package com.example.parstagram.models;
 
-public class User {
+import com.parse.ParseClassName;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
+
+@ParseClassName("_User")
+public class User extends ParseUser {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_PROFILE_PICTURE = "profilePicture";
+
+    public String getDescription() {
+        return getString(KEY_DESCRIPTION);
+    }
+
+    public void setDescription(String description) {
+        put(KEY_DESCRIPTION, description);
+    }
+
+    public ParseFile getProfilePicture() {
+        return getParseFile(KEY_PROFILE_PICTURE);
+    }
+
+    public void setProfilePicture(ParseFile image) {
+        put(KEY_PROFILE_PICTURE, image);
+    }
+
 }

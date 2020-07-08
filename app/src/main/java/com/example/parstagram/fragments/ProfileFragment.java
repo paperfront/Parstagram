@@ -5,15 +5,18 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
@@ -37,7 +41,10 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
+import java.io.File;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +56,8 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
 
     public static final String TAG = "ProfileFragment";
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    private static final String PHOTO_FILENAME = "profile.jpg";
 
     private TextView tvDescription;
     private TextView tvUsername;
@@ -58,7 +67,8 @@ public class ProfileFragment extends Fragment {
     private Button btLogout;
     private ImageView ivProfilePicture;
 
-    private ParseUser currentUser;
+    private User currentUser;
+    private File photoFile;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -103,7 +113,7 @@ public class ProfileFragment extends Fragment {
         postsBinding = binding.tvCounterPosts;
         followersBinding = binding.tvCounterFollowers;
         followingBinding = binding.tvCounterFollowing;
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = (User) ParseUser.getCurrentUser();
     }
 
     private void setupElements() {
@@ -130,11 +140,33 @@ public class ProfileFragment extends Fragment {
     private void setupImage() {
         if (currentUser.has(User.KEY_PROFILE_PICTURE)) {
             ParseFile profileFile = (ParseFile) currentUser.get(User.KEY_PROFILE_PICTURE);
-            ImageUtils.loadImages(profileFile, ivProfilePicture);
+            ImageUtils.loadProfile(getContext(), profileFile, ivProfilePicture);
         } else {
             ImageUtils.loadDefaultProfilePic(getContext(), ivProfilePicture);
         }
+        ivProfilePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Profile Picture Clicked.");
+                launchCamera();
+            }
+        });
 
+    }
+
+    private void launchCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = ImageUtils.getPhotoFileUri(getContext(), PHOTO_FILENAME);
+        Uri fileProvider = FileProvider.getUriForFile(getContext(),
+                "com.codepath.fileprovider.parstagram", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            // Start the image capture intent to take photo
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
     }
 
     private void setupButtons() {
@@ -148,5 +180,27 @@ public class ProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // by this point we have the camera photo on disk
+                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                // RESIZE BITMAP, see section below
+                // Load the taken image into a preview
+                Glide.with(getContext()).load(takenImage).circleCrop().into(ivProfilePicture);
+                currentUser.setProfilePicture(new ParseFile(photoFile));
+                try {
+                    currentUser.save();
+                } catch (ParseException e) {
+                    Log.e(TAG, "Failed to save updated user.", e);
+                }
+            } else { // Result was a failure
+                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

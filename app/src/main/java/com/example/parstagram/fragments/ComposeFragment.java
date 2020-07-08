@@ -26,6 +26,7 @@ import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.FragmentComposeBinding;
 import com.example.parstagram.models.Post;
+import com.example.parstagram.models.User;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -177,12 +178,12 @@ public class ComposeFragment extends Fragment {
                     , Toast.LENGTH_SHORT).show();
             return;
         }
-        ParseUser user = ParseUser.getCurrentUser();
+        User user = (User) ParseUser.getCurrentUser();
         savePost(description, user);
 
     }
 
-    private void savePost(String description, ParseUser user) {
+    private void savePost(String description, User user) {
         Post post = new Post();
         post.setAuthor(user);
         post.setDescription(description);
