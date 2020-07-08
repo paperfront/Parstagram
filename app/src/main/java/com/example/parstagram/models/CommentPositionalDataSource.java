@@ -23,7 +23,6 @@ public class CommentPositionalDataSource extends PositionalDataSource<Comment> {
                 .orderByDescending("createdAt")
                 .include(Comment.KEY_POST)
                 .include(Comment.KEY_COMMENTER);
-
     }
 
     @Override

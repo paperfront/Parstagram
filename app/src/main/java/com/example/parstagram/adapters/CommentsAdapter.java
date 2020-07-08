@@ -1,7 +1,9 @@
 package com.example.parstagram.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +18,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.ItemCommentBinding;
+import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.helpers.ParseRelativeDate;
 import com.example.parstagram.models.Comment;
 import com.example.parstagram.models.Post;
+import com.example.parstagram.models.User;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.List;
 
 public class CommentsAdapter extends PagedListAdapter<Comment, CommentsAdapter.ViewHolder> {
 
     private Context context;
     private FragmentActivity activity;
+
+    public static final String TAG = "CommentsAdapter";
 
     public static final DiffUtil.ItemCallback<Comment> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Comment>() {
@@ -82,12 +94,26 @@ public class CommentsAdapter extends PagedListAdapter<Comment, CommentsAdapter.V
             tvTimestamp = binding.tvTimestamp;
         }
 
-        private void bind(Comment comment) {
+        private void bind(final Comment comment) {
             ImageUtils.loadProfile(context, comment.getCommenter().getProfilePicture(), ivProfileImage);
             String descriptionString = "<b>" + comment.getCommenter().getUsername() + "</b> : "
                     + comment.getContent();
             tvComment.setText(Html.fromHtml(descriptionString));
             tvTimestamp.setText(ParseRelativeDate.getRelativeTimeAgo(comment.getCreatedAt().toString()));
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ProfileFragment fragment = ProfileFragment.newInstance();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(ProfileFragment.KEY_PROFILE, comment.getCommenter());
+                    fragment.setArguments(bundle);
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+
         }
     }
 }
