@@ -70,12 +70,36 @@
             android:layout_below="@id/tvUsername"
             tools:text="This is a sample description." />
 
-        <Button
-            android:id="@+id/btLogout"
+        <RelativeLayout
+            android:id="@+id/userButtonsHolder"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/tvDescription"
-            android:text="Log Out" />
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvDescription">
+
+            <Button
+                android:id="@+id/btEditProfile"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="@string/edit_profile" />
+            <Button
+                android:id="@+id/btLogout"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/btEditProfile"
+                android:text="@string/log_out" />
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvGrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/userButtonsHolder"
+            android:layout_marginTop="8dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
 
     </RelativeLayout>
 

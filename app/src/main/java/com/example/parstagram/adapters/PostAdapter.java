@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.parstagram.databinding.ItemPostGridBinding;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.R;
@@ -29,8 +31,12 @@ import com.parse.ParseUser;
 public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> {
 
     private Context context;
-    private ItemPostBinding binding;
     private FragmentActivity activity;
+    private int holderType;
+
+    public static final int TYPE_FEED = 1;
+    public static final int TYPE_GRID = 2;
+    public static final String TAG = "PostAdapter";
 
     public static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Post>() {
@@ -48,18 +54,32 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         super(DIFF_CALLBACK);
     }
 
-    public PostAdapter(Context context, FragmentActivity activity) {
+    public PostAdapter(Context context, FragmentActivity activity, int holderType) {
         super(DIFF_CALLBACK);
+
         this.context = context;
         this.activity = activity;
+        this.holderType = holderType;
     }
 
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false);
-        return new ViewHolder(view);
+        View view;
+        switch (holderType) {
+            case TYPE_FEED:
+                view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false);
+                return new FeedHolder(view);
+            case TYPE_GRID:
+                view = LayoutInflater.from(context).inflate(R.layout.item_post_grid, parent, false);
+                return new GridHolder(view);
+            default:
+                Log.e(TAG, "Invalid type selected for adapter.");
+                view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false);
+                return new FeedHolder(view);
+        }
+
     }
 
     @Override
@@ -71,7 +91,17 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         holder.bind(post);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    abstract class ViewHolder extends RecyclerView.ViewHolder {
+
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        abstract void bind(final Post post);
+    }
+
+    public class FeedHolder extends ViewHolder {
 
 
         private ImageView ivProfilePicture;
@@ -81,7 +111,9 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         private TextView tvComments;
         private TextView tvTimestamp;
 
-        public ViewHolder(@NonNull View itemView) {
+        private ItemPostBinding binding;
+
+        public FeedHolder(@NonNull View itemView) {
             super(itemView);
             binding = ItemPostBinding.bind(itemView);
             ivProfilePicture = binding.ivProfilePicture;
@@ -91,7 +123,8 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvComments = binding.tvComments;
             tvTimestamp = binding.tvTimestamp;
         }
-        private void bind(final Post currentPost) {
+
+        void bind(final Post currentPost) {
             if (!currentPost.getAuthor().has(User.KEY_PROFILE_PICTURE)) {
                 ImageUtils.loadDefaultProfilePic(context, ivProfilePicture);
             } else {
@@ -117,6 +150,24 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                 }
             });
 
+        }
+    }
+
+    public class GridHolder extends ViewHolder {
+
+        private ImageView ivMainPicture;
+
+        private ItemPostGridBinding binding;
+
+        public GridHolder(@NonNull View itemView) {
+            super(itemView);
+            binding = ItemPostGridBinding.bind(itemView);
+            ivMainPicture = binding.ivMainImage;
+        }
+
+        @Override
+        void bind(Post post) {
+            ImageUtils.loadIntoGrid(context, post.getImage(), ivMainPicture);
         }
     }
 }

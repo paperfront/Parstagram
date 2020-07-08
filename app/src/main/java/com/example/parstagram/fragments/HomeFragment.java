@@ -114,7 +114,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRV() {
-        adapter = new PostAdapter(getContext(), getActivity());
+        adapter = new PostAdapter(getContext(), getActivity(), PostAdapter.TYPE_FEED);
         setupData();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rvFeed.setAdapter(adapter);

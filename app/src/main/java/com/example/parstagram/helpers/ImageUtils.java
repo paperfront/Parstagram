@@ -33,7 +33,26 @@ public class ImageUtils {
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
                         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        Glide.with(context).load(bmp).into(img);
+                        Glide.with(context).load(bmp).centerCrop().into(img);
+                    } else {
+                        Log.e(TAG, "Failed to decode image.", e);
+                        loadImages(context, thumbnail, img);
+                    }
+                }
+            });
+        } else {
+            img.setImageResource(R.drawable.ic_launcher_background);
+        }
+    }// load image
+
+    public static void loadIntoGrid(final Context context, final ParseFile thumbnail, final ImageView img) {
+        if (thumbnail != null) {
+            thumbnail.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] data, ParseException e) {
+                    if (e == null) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        Glide.with(context).load(bmp).override(135).centerCrop().into(img);
                     } else {
                         Log.e(TAG, "Failed to decode image.", e);
                         loadImages(context, thumbnail, img);

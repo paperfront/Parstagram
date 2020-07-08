@@ -13,6 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -24,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +41,8 @@ import com.example.parstagram.databinding.FragmentHomeBinding;
 import com.example.parstagram.databinding.FragmentProfileBinding;
 import com.example.parstagram.databinding.TextviewCounterBinding;
 import com.example.parstagram.helpers.ImageUtils;
+import com.example.parstagram.models.ParseDataSourceFactory;
+import com.example.parstagram.models.ParseGridDataSourceFactory;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
 import com.parse.ParseException;
@@ -67,9 +75,14 @@ public class ProfileFragment extends Fragment {
     TextviewCounterBinding followingBinding;
     private Button btLogout;
     private ImageView ivProfilePicture;
+    private RecyclerView rvGrid;
+    private PostAdapter adapter;
+    private RelativeLayout userButtonsHolder;
 
     private User currentUser;
     private File photoFile;
+    private ParseGridDataSourceFactory factory;
+    private LiveData<PagedList<Post>> posts;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -115,6 +128,8 @@ public class ProfileFragment extends Fragment {
         postsBinding = binding.tvCounterPosts;
         followersBinding = binding.tvCounterFollowers;
         followingBinding = binding.tvCounterFollowing;
+        rvGrid = binding.rvGrid;
+        userButtonsHolder = binding.userButtonsHolder;
     }
 
     private void setupElements() {
@@ -122,6 +137,33 @@ public class ProfileFragment extends Fragment {
         setupText();
         setupImage();
         setupButtons();
+        setupRV();
+    }
+
+    private void setupRV() {
+        RecyclerView.LayoutManager manager = new GridLayoutManager(getContext(), 3);
+        adapter = new PostAdapter(getContext(), getActivity(), PostAdapter.TYPE_GRID);
+        rvGrid.setAdapter(adapter);
+        rvGrid.setLayoutManager(manager);
+        setupData();
+
+    }
+
+    private void setupData() {
+        PagedList.Config pagedListConfig =
+                new PagedList.Config.Builder().setEnablePlaceholders(true)
+                        .setPrefetchDistance(10)
+                        .setInitialLoadSizeHint(10)
+                        .setPageSize(10).build();
+        factory = new ParseGridDataSourceFactory(currentUser);
+
+        posts = new LivePagedListBuilder(factory, pagedListConfig).build();
+        posts.observe(getActivity(), new Observer<PagedList<Post>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Post> postList) {
+                adapter.submitList(postList);
+            }
+        });
     }
 
     private void setupCounters() {
@@ -184,7 +226,7 @@ public class ProfileFragment extends Fragment {
                 }
             });
         } else {
-            btLogout.setVisibility(View.GONE);
+            userButtonsHolder.setVisibility(View.GONE);
         }
 
 
