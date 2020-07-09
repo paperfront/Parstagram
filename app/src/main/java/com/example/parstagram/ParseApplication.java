@@ -5,6 +5,7 @@ import android.app.Application;
 import com.example.parstagram.models.Comment;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
+import com.example.parstagram.models.UserInfo;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -18,6 +19,7 @@ public class ParseApplication extends Application {
 
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(User.class);
+        ParseObject.registerSubclass(UserInfo.class);
         ParseObject.registerSubclass(Comment.class);
 
         // Use for troubleshooting -- remove this line for production

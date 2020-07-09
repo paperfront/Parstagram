@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.parstagram.databinding.ActivityLoginBinding;
 import com.example.parstagram.models.User;
+import com.example.parstagram.models.UserInfo;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -45,9 +46,24 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(rootView);
 
         if (ParseUser.getCurrentUser() != null) {
-            gotoMainActivity();
-        }
+            User user = (User) ParseUser.getCurrentUser();
+            UserInfo received = user.getUserInfo();
+            if (received == null) {
+                UserInfo newInfo = new UserInfo();
+                newInfo.setTotalFollowers(0);
+                newInfo.setTotalFollowing(0);
+                user.setUserInfo(newInfo);
+                user.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        gotoMainActivity();
+                    }
+                });
+            } else {
+                gotoMainActivity();
+            }
 
+        }
         bindElements();
         setupButtons();
     }
@@ -82,6 +98,8 @@ public class LoginActivity extends AppCompatActivity {
         newUser.setPassword(password);
         newUser.setDescription("");
         newUser.setTotalPosts(0);
+        UserInfo info = new UserInfo();
+        newUser.setUserInfo(info);
         int drawableId = getResources().getIdentifier("default_profile", "drawable", getPackageName());
         Drawable d = getDrawable(drawableId);
         Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
@@ -135,8 +153,34 @@ public class LoginActivity extends AppCompatActivity {
                             "are correct and try again.", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    Log.i(TAG, "Sign in successful.");
-                    gotoMainActivity();
+                    User tempUser = (User) user;
+                    UserInfo received = tempUser.getUserInfo();
+                    if (received == null) {
+                        UserInfo newInfo = new UserInfo();
+                        newInfo.setTotalFollowers(0);
+                        newInfo.setTotalFollowing(0);
+                        tempUser.setUserInfo(newInfo);
+                        tempUser.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Log.i(TAG, "Sign in successful.");
+                                gotoMainActivity();
+                            }
+                        });
+                    } else {
+                        UserInfo newInfo = new UserInfo();
+                        newInfo.setTotalFollowers(0);
+                        newInfo.setTotalFollowing(0);
+                        tempUser.setUserInfo(newInfo);
+                        tempUser.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Log.i(TAG, "Sign in successful.");
+                                gotoMainActivity();
+                            }
+                        });
+                    }
+
                 }
 
             }

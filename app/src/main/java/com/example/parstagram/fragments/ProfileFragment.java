@@ -38,8 +38,11 @@ import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.models.ParseGridDataSourceFactory;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
+import com.example.parstagram.models.UserInfo;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.io.File;
@@ -74,6 +77,7 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
     private File photoFile;
     private ParseGridDataSourceFactory factory;
     private LiveData<PagedList<Post>> posts;
+    private boolean following;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -161,11 +165,21 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
 
     private void setupCounters() {
         postsBinding.tvWord.setText(R.string.posts);
-        postsBinding.tvCounter.setText(Integer.toString(currentUser.getTotalPosts()));
         followingBinding.tvWord.setText(R.string.following);
-        followingBinding.tvCounter.setText("0");
         followersBinding.tvWord.setText(R.string.followers);
-        followersBinding.tvCounter.setText("0");
+        currentUser.getUserInfo().fetchInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                UserInfo info = (UserInfo) object;
+                postsBinding.tvCounter.setText(Integer.toString(currentUser.getTotalPosts()));
+
+                followingBinding.tvCounter.setText(Integer.toString(info.getTotalFollowing()));
+
+                followersBinding.tvCounter.setText(Integer.toString(info.getTotalFollowers()));
+            }
+        });
+
+
     }
 
     private void setupText() {
@@ -206,6 +220,20 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
     }
 
     private void setupButtons() {
+        final UserInfo infoActive;
+        final UserInfo infoCurrent;
+        User tempActiveUser;
+
+        try {
+            tempActiveUser = (User) ParseUser.getCurrentUser().fetchIfNeeded();
+            currentUser = (User) currentUser.fetchIfNeeded();
+        } catch (ParseException e) {
+            Log.e(TAG, "Failed to load updated users.", e);
+            return;
+        }
+        final User activeUser = tempActiveUser;
+        infoActive = activeUser.getUserInfo();
+        infoCurrent = currentUser.getUserInfo();
 
         if (currentUser.hasSameId(ParseUser.getCurrentUser())) {
             btLogout.setOnClickListener(new View.OnClickListener() {
@@ -225,10 +253,48 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
                 }
             });
         } else {
-            userButtonsHolder.setVisibility(View.GONE);
+            btLogout.setVisibility(View.GONE);
+            try {
+                if (activeUser.isFollowing(currentUser)) {
+                    setToFollow();
+                } else {
+                    setToUnfollow();
+                }
+
+                btEditProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (following) {
+                            infoActive.removeFollowing(currentUser);
+                            infoCurrent.removeFollower(activeUser);
+                            setToUnfollow();
+                        } else {
+                            infoActive.addFollowing(currentUser);
+                            infoCurrent.addFollower(activeUser);
+                            setToFollow();
+                        }
+                        setupCounters();
+
+                    }
+                });
+
+            } catch (ParseException e) {
+                Log.e(TAG, "Failed to check following list.", e);
+                btEditProfile.setVisibility(View.GONE);
+            }
         }
 
+    }
 
+
+    private void setToFollow() {
+        following = true;
+        btEditProfile.setText("Unfollow");
+    }
+
+    private void setToUnfollow() {
+        following = false;
+        btEditProfile.setText("Follow");
     }
 
     @Override
