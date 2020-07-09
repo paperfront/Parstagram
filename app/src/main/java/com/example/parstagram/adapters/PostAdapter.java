@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parstagram.databinding.ItemPostGridBinding;
 import com.example.parstagram.fragments.CommentsFragment;
+import com.example.parstagram.fragments.PostDetailFragment;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.R;
@@ -178,6 +179,16 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             btComment.setOnClickListener(commentsListener);
             tvComments.setOnClickListener(commentsListener);
 
+            ivMainPicture.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PostDetailFragment fragment = PostDetailFragment.newInstance(currentPost);
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
 
         }
     }
@@ -195,8 +206,18 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         }
 
         @Override
-        void bind(Post post) {
+        void bind(final Post post) {
             ImageUtils.loadIntoGrid(context, post.getImage(), ivMainPicture);
+            ivMainPicture.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PostDetailFragment fragment = PostDetailFragment.newInstance(post);
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
         }
     }
 }
