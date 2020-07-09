@@ -2,8 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    >
+    android:layout_margin="8dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -24,28 +23,43 @@
 
             <TextView
                 android:id="@+id/tvUsername"
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="8dp"
                 android:layout_toEndOf="@id/ivProfilePicture"
                 android:gravity="center_vertical"
+                android:textStyle="bold"
                 tools:text="paperfront"></TextView>
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/ivMainImage"
+        <RelativeLayout
+            android:id="@+id/rlMainImageHolder"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_below="@id/rlTop"
-            android:layout_marginTop="8dp"></ImageView>
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/ivMainImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></ImageView>
+
+            <ImageView
+                android:id="@+id/ivPopupHeart"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerInParent="true">
+
+            </ImageView>
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:id="@+id/rlComments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ivMainImage"
+            android:layout_below="@id/rlMainImageHolder"
             android:layout_margin="16dp">
 
             <LinearLayout
@@ -112,8 +126,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvComments"
-                tools:text="6h ago"
-                android:textColor="@android:color/tertiary_text_light"/>
+                android:textColor="@android:color/tertiary_text_light"
+                tools:text="6h ago" />
         </RelativeLayout>
 
 

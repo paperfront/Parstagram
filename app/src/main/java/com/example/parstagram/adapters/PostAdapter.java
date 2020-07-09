@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.parstagram.databinding.ItemPostGridBinding;
 import com.example.parstagram.fragments.CommentsFragment;
 import com.example.parstagram.fragments.PostDetailFragment;
@@ -125,6 +127,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         private TextView tvLikes;
         private Button btComment;
         private Button btLike;
+        private ImageView ivPopupHeart;
         private boolean isLiked = false;
 
         private ItemPostBinding binding;
@@ -141,6 +144,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             btComment = binding.btComment;
             tvLikes = binding.tvLikes;
             btLike = binding.btLike;
+            ivPopupHeart = binding.ivPopupHeart;
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -157,7 +161,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvUsername.setText(currentPost.getAuthor().getUsername());
             tvTimestamp.setText(ParseRelativeDate.getRelativeTimeAgo(currentPost.getCreatedAt().toString()));
             tvLikes.setText(currentPost.getTotalLikes() + " likes");
-
+            ivPopupHeart.setVisibility(View.GONE);
 
             View.OnClickListener profileListener = new View.OnClickListener() {
                 @Override
@@ -230,6 +234,16 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                     @Override
                     public boolean onDoubleTap(MotionEvent e) {
                         Log.d("TEST", "onDoubleTap");
+                        ivPopupHeart.setVisibility(View.VISIBLE);
+                        Drawable fullHeart = context.getDrawable(R.mipmap.ufi_heart_active);
+                        DrawableCompat.setTint(fullHeart, Color.RED);
+                        ivPopupHeart.setBackground(fullHeart);
+                        YoYo.with(Techniques.Landing)
+                                .duration(500)
+                                .playOn(ivPopupHeart);
+                        YoYo.with(Techniques.TakingOff)
+                                .duration(500)
+                                .playOn(ivPopupHeart);
                         handleLikeAction(currentPost);
                         return super.onDoubleTap(e);
                     }
