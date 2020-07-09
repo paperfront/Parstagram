@@ -1,12 +1,16 @@
 package com.example.parstagram.fragments;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +24,9 @@ import com.example.parstagram.helpers.ImageUtils;
 import com.example.parstagram.helpers.ParseRelativeDate;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +36,7 @@ import com.example.parstagram.models.User;
 public class PostDetailFragment extends Fragment {
 
     private static final String ARG_POST = "post";
+    public static final String TAG = "PostDetailFragment";
 
     private Post post;
 
@@ -40,7 +48,10 @@ public class PostDetailFragment extends Fragment {
     private TextView tvDescription;
     private TextView tvComments;
     private TextView tvTimestamp;
+    private TextView tvLikes;
     private Button btComment;
+    private Button btLike;
+    private boolean isLiked = false;
 
     public PostDetailFragment() {
         // Required empty public constructor
@@ -93,6 +104,8 @@ public class PostDetailFragment extends Fragment {
         tvComments = binding.post.tvComments;
         tvTimestamp = binding.post.tvTimestamp;
         btComment = binding.post.btComment;
+        btLike = binding.post.btLike;
+        tvLikes = binding.post.tvLikes;
     }
 
     private void setupElements() {
@@ -107,6 +120,7 @@ public class PostDetailFragment extends Fragment {
         tvDescription.setText(Html.fromHtml(descriptionString));
         tvUsername.setText(post.getAuthor().getUsername());
         tvTimestamp.setText(ParseRelativeDate.getRelativeTimeAgo(post.getCreatedAt().toString()));
+
 
 
         View.OnClickListener profileListener = new View.OnClickListener() {
@@ -127,6 +141,7 @@ public class PostDetailFragment extends Fragment {
         tvUsername.setOnClickListener(profileListener);
 
         tvComments.setText("View " + post.getTotalComments() + " Comments");
+        updateLikes();
 
         View.OnClickListener commentsListener = new View.OnClickListener() {
             @Override
@@ -144,5 +159,53 @@ public class PostDetailFragment extends Fragment {
 
         btComment.setOnClickListener(commentsListener);
         tvComments.setOnClickListener(commentsListener);
+
+        final User currentUser = (User) ParseUser.getCurrentUser();
+        try {
+            if (currentUser.likesPost(post)) {
+                setToLiked();
+            }
+        } catch (ParseException e) {
+            Log.e(TAG, "Failed to load liked posts relation.", e);
+        }
+        btLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isLiked) {
+                    Log.i(TAG, "Uniking post...");
+                    currentUser.removePost(post);
+                    post.decrementLikes();
+                    setToUnliked();
+                } else {
+                    Log.i(TAG, "Liking post...");
+                    currentUser.addPost(post);
+                    post.incrementLikes();
+                    setToLiked();
+                }
+                post.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        updateLikes();
+                    }
+                });
+            }
+        });
+    }
+
+    private void updateLikes() {
+        tvLikes.setText(post.getTotalLikes() + " likes");
+    }
+
+    private void setToLiked() {
+        Drawable filledHeart = getContext().getDrawable(R.mipmap.ufi_heart_active);
+        DrawableCompat.setTint(filledHeart, Color.RED);
+        btLike.setBackground(filledHeart);
+        isLiked = true;
+    }
+
+    private void setToUnliked() {
+        Drawable filledHeart = getContext().getDrawable(R.mipmap.ufi_heart);
+        btLike.setBackground(filledHeart);
+        isLiked = false;
     }
 }

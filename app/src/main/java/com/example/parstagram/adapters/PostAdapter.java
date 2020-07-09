@@ -2,6 +2,8 @@ package com.example.parstagram.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -14,11 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.parstagram.databinding.ItemPostGridBinding;
 import com.example.parstagram.fragments.CommentsFragment;
 import com.example.parstagram.fragments.PostDetailFragment;
@@ -29,7 +33,9 @@ import com.example.parstagram.databinding.ItemPostBinding;
 import com.example.parstagram.helpers.ParseRelativeDate;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
+import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> {
 
@@ -113,7 +119,10 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
         private TextView tvDescription;
         private TextView tvComments;
         private TextView tvTimestamp;
+        private TextView tvLikes;
         private Button btComment;
+        private Button btLike;
+        private boolean isLiked = false;
 
         private ItemPostBinding binding;
 
@@ -127,6 +136,8 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvComments = binding.tvComments;
             tvTimestamp = binding.tvTimestamp;
             btComment = binding.btComment;
+            tvLikes = binding.tvLikes;
+            btLike = binding.btLike;
         }
 
         void bind(final Post currentPost) {
@@ -141,6 +152,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             tvDescription.setText(Html.fromHtml(descriptionString));
             tvUsername.setText(currentPost.getAuthor().getUsername());
             tvTimestamp.setText(ParseRelativeDate.getRelativeTimeAgo(currentPost.getCreatedAt().toString()));
+            tvLikes.setText(currentPost.getTotalLikes() + " likes");
 
 
             View.OnClickListener profileListener = new View.OnClickListener() {
@@ -158,6 +170,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             };
 
             ivProfilePicture.setOnClickListener(profileListener);
+
             tvUsername.setOnClickListener(profileListener);
 
             tvComments.setText("View " + currentPost.getTotalComments() + " Comments");
@@ -190,8 +203,59 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                 }
             });
 
+            final User currentUser = (User) ParseUser.getCurrentUser();
+            try {
+                if (currentUser.likesPost(currentPost)) {
+                    setToLiked();
+                } else {
+                    setToUnliked();
+                }
+            } catch (ParseException e) {
+                Log.e(TAG, "Failed to load liked posts relation.", e);
+            }
+
+            btLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (isLiked) {
+                        Log.i(TAG, "Uniking post...");
+                        currentUser.removePost(currentPost);
+                        currentPost.decrementLikes();
+                        setToUnliked();
+                    } else {
+                        Log.i(TAG, "Liking post...");
+                        currentUser.addPost(currentPost);
+                        currentPost.incrementLikes();
+                        setToLiked();
+                    }
+                    currentPost.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            tvLikes.setText(currentPost.getTotalLikes() + " likes");
+                        }
+                    });
+
+                }
+            });
+
+        }
+
+
+        private void setToLiked() {
+            Drawable filledHeart = context.getDrawable(R.mipmap.ufi_heart_active);
+            DrawableCompat.setTint(filledHeart, Color.RED);
+            btLike.setBackground(filledHeart);
+            isLiked = true;
+        }
+
+        private void setToUnliked() {
+            Drawable filledHeart = context.getDrawable(R.mipmap.ufi_heart);
+            btLike.setBackground(filledHeart);
+            isLiked = false;
         }
     }
+
+
 
     public class GridHolder extends ViewHolder {
 

@@ -122,6 +122,7 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
         rvGrid = binding.rvGrid;
         userButtonsHolder = binding.userButtonsHolder;
         btEditProfile = binding.btEditProfile;
+
     }
 
     private void setupElements() {
