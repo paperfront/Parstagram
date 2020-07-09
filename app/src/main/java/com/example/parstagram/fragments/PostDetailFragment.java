@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.parstagram.R;
 import com.example.parstagram.databinding.FragmentPostDetailBinding;
 import com.example.parstagram.helpers.ImageUtils;
@@ -54,6 +56,7 @@ public class PostDetailFragment extends Fragment {
     private TextView tvLikes;
     private Button btComment;
     private Button btLike;
+    private ImageView ivPopupHeart;
     private boolean isLiked = false;
 
     public PostDetailFragment() {
@@ -109,6 +112,7 @@ public class PostDetailFragment extends Fragment {
         btComment = binding.post.btComment;
         btLike = binding.post.btLike;
         tvLikes = binding.post.tvLikes;
+        ivPopupHeart = binding.post.ivPopupHeart;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -119,6 +123,7 @@ public class PostDetailFragment extends Fragment {
             ImageUtils.loadProfile(getContext(), post.getAuthor().getProfilePicture(),
                     ivProfilePicture);
         }
+        ivPopupHeart.setVisibility(View.GONE);
         ImageUtils.loadImages(getContext(), post.getImage(), ivMainPicture);
         String descriptionString = "<b>" + post.getAuthor().getUsername() + "</b> : " + post.getDescription();
         tvDescription.setText(Html.fromHtml(descriptionString));
@@ -184,6 +189,16 @@ public class PostDetailFragment extends Fragment {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
                     Log.d("TEST", "onDoubleTap");
+                    ivPopupHeart.setVisibility(View.VISIBLE);
+                    Drawable fullHeart = getContext().getDrawable(R.mipmap.ufi_heart_active);
+                    DrawableCompat.setTint(fullHeart, Color.RED);
+                    ivPopupHeart.setBackground(fullHeart);
+                    YoYo.with(Techniques.Landing)
+                            .duration(500)
+                            .playOn(ivPopupHeart);
+                    YoYo.with(Techniques.TakingOff)
+                            .duration(500)
+                            .playOn(ivPopupHeart);
                     handleLikeAction();
                     return super.onDoubleTap(e);
                 }

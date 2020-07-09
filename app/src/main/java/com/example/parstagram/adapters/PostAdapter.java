@@ -200,16 +200,6 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             btComment.setOnClickListener(commentsListener);
             tvComments.setOnClickListener(commentsListener);
 
-            ivMainPicture.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PostDetailFragment fragment = PostDetailFragment.newInstance(currentPost);
-                    activity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.flContainer, fragment)
-                            .addToBackStack(null)
-                            .commit();
-                }
-            });
 
             final User currentUser = (User) ParseUser.getCurrentUser();
             try {
@@ -247,6 +237,12 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                         handleLikeAction(currentPost);
                         return super.onDoubleTap(e);
                     }
+
+                    @Override
+                    public boolean onSingleTapUp(MotionEvent e) {
+                        goToPostDetail(currentPost);
+                        return super.onSingleTapUp(e);
+                    }
                 });
 
                 @Override
@@ -257,8 +253,17 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
                 }
             });
 
+
         }
 
+
+        private void goToPostDetail(Post currentPost) {
+            PostDetailFragment fragment = PostDetailFragment.newInstance(currentPost);
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.flContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
 
         private void setToLiked() {
             Drawable filledHeart = context.getDrawable(R.mipmap.ufi_heart_active);
