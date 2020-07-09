@@ -73,6 +73,9 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
     private PostAdapter adapter;
     private RelativeLayout userButtonsHolder;
 
+    private RelativeLayout tvCounterFollowers;
+    private RelativeLayout tvCounterFollowing;
+
     private User currentUser;
     private File photoFile;
     private ParseGridDataSourceFactory factory;
@@ -126,11 +129,15 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
         rvGrid = binding.rvGrid;
         userButtonsHolder = binding.userButtonsHolder;
         btEditProfile = binding.btEditProfile;
+        tvCounterFollowers = binding.tvCounterFollowers.getRoot();
+        tvCounterFollowing = binding.tvCounterFollowing.getRoot();
+
 
     }
 
     private void setupElements() {
         setupCounters();
+        setupCounterButtons();
         setupText();
         setupImage();
         setupButtons();
@@ -180,6 +187,32 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
         });
 
 
+    }
+
+    private void setupCounterButtons() {
+        tvCounterFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserListFragment fragment = UserListFragment.newInstance(currentUser, UserListFragment.KEY_FOLLOWERS);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+
+
+        tvCounterFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserListFragment fragment = UserListFragment.newInstance(currentUser, UserListFragment.KEY_FOLLOWING);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
     }
 
     private void setupText() {
@@ -283,6 +316,8 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
                 btEditProfile.setVisibility(View.GONE);
             }
         }
+
+
 
     }
 

@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "Navigation item clicked does not have a case. Setting clicked item to home...");
                         fragment = homeFragment;
                 }
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
