@@ -1,5 +1,6 @@
 package com.example.parstagram.fragments;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,7 +12,9 @@ import androidx.fragment.app.Fragment;
 
 import android.text.Html;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -108,6 +111,7 @@ public class PostDetailFragment extends Fragment {
         tvLikes = binding.post.tvLikes;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setupElements() {
         if (!post.getAuthor().has(User.KEY_PROFILE_PICTURE)) {
             ImageUtils.loadDefaultProfilePic(getContext(), ivProfilePicture);
@@ -171,23 +175,46 @@ public class PostDetailFragment extends Fragment {
         btLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isLiked) {
-                    Log.i(TAG, "Uniking post...");
-                    currentUser.removePost(post);
-                    post.decrementLikes();
-                    setToUnliked();
-                } else {
-                    Log.i(TAG, "Liking post...");
-                    currentUser.addPost(post);
-                    post.incrementLikes();
-                    setToLiked();
+                handleLikeAction();
+            }
+        });
+
+        ivMainPicture.setOnTouchListener(new View.OnTouchListener() {
+            private GestureDetector gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    Log.d("TEST", "onDoubleTap");
+                    handleLikeAction();
+                    return super.onDoubleTap(e);
                 }
-                post.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        updateLikes();
-                    }
-                });
+            });
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d("TEST", "Raw event: " + event.getAction() + ", (" + event.getRawX() + ", " + event.getRawY() + ")");
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
+    }
+
+    private void handleLikeAction() {
+        final User currentUser = (User) ParseUser.getCurrentUser();
+        if (isLiked) {
+            Log.i(TAG, "Uniking post...");
+            currentUser.removePost(post);
+            post.decrementLikes();
+            setToUnliked();
+        } else {
+            Log.i(TAG, "Liking post...");
+            currentUser.addPost(post);
+            post.incrementLikes();
+            setToLiked();
+        }
+        post.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                updateLikes();
             }
         });
     }

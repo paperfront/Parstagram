@@ -1,5 +1,6 @@
 package com.example.parstagram.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -7,7 +8,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -140,6 +143,7 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             btLike = binding.btLike;
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         void bind(final Post currentPost) {
             if (!currentPost.getAuthor().has(User.KEY_PROFILE_PICTURE)) {
                 ImageUtils.loadDefaultProfilePic(context, ivProfilePicture);
@@ -217,24 +221,25 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             btLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (isLiked) {
-                        Log.i(TAG, "Uniking post...");
-                        currentUser.removePost(currentPost);
-                        currentPost.decrementLikes();
-                        setToUnliked();
-                    } else {
-                        Log.i(TAG, "Liking post...");
-                        currentUser.addPost(currentPost);
-                        currentPost.incrementLikes();
-                        setToLiked();
-                    }
-                    currentPost.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            tvLikes.setText(currentPost.getTotalLikes() + " likes");
-                        }
-                    });
+                    handleLikeAction(currentPost);
+                }
+            });
 
+            ivMainPicture.setOnTouchListener(new View.OnTouchListener() {
+                private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onDoubleTap(MotionEvent e) {
+                        Log.d("TEST", "onDoubleTap");
+                        handleLikeAction(currentPost);
+                        return super.onDoubleTap(e);
+                    }
+                });
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.d("TEST", "Raw event: " + event.getAction() + ", (" + event.getRawX() + ", " + event.getRawY() + ")");
+                    gestureDetector.onTouchEvent(event);
+                    return true;
                 }
             });
 
@@ -252,6 +257,27 @@ public class PostAdapter extends PagedListAdapter<Post, PostAdapter.ViewHolder> 
             Drawable filledHeart = context.getDrawable(R.mipmap.ufi_heart);
             btLike.setBackground(filledHeart);
             isLiked = false;
+        }
+
+        private void handleLikeAction(final Post currentPost) {
+            final User currentUser = (User) ParseUser.getCurrentUser();
+            if (isLiked) {
+                Log.i(TAG, "Uniking post...");
+                currentUser.removePost(currentPost);
+                currentPost.decrementLikes();
+                setToUnliked();
+            } else {
+                Log.i(TAG, "Liking post...");
+                currentUser.addPost(currentPost);
+                currentPost.incrementLikes();
+                setToLiked();
+            }
+            currentPost.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    tvLikes.setText(currentPost.getTotalLikes() + " likes");
+                }
+            });
         }
     }
 
