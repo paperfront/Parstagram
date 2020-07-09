@@ -160,11 +160,11 @@ public class ProfileFragment extends Fragment implements EditProfileDialogFragme
 
     private void setupCounters() {
         postsBinding.tvWord.setText(R.string.posts);
-        postsBinding.tvCounter.setText("300");
+        postsBinding.tvCounter.setText(Integer.toString(currentUser.getTotalPosts()));
         followingBinding.tvWord.setText(R.string.following);
-        followingBinding.tvCounter.setText("300");
+        followingBinding.tvCounter.setText("0");
         followersBinding.tvWord.setText(R.string.followers);
-        followersBinding.tvCounter.setText("300");
+        followersBinding.tvCounter.setText("0");
     }
 
     private void setupText() {

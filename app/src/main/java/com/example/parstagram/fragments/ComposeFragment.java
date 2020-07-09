@@ -186,6 +186,7 @@ public class ComposeFragment extends Fragment {
 
     private void savePost(String description, User user) {
         Post post = new Post();
+        user.incrementPosts();
         post.setAuthor(user);
         post.setDescription(description);
         post.setImage(new ParseFile(photoFile));

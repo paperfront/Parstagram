@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setDescription("");
+        newUser.setTotalPosts(0);
         int drawableId = getResources().getIdentifier("default_profile", "drawable", getPackageName());
         Drawable d = getDrawable(drawableId);
         Bitmap bitmap = ((BitmapDrawable)d).getBitmap();

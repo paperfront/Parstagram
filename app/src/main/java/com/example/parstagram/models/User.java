@@ -11,6 +11,7 @@ import com.parse.ParseUser;
 public class User extends ParseUser implements Parcelable {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_PROFILE_PICTURE = "profilePicture";
+    public static final String KEY_NUM_POSTS = "totalPosts";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -26,6 +27,17 @@ public class User extends ParseUser implements Parcelable {
 
     public void setProfilePicture(ParseFile image) {
         put(KEY_PROFILE_PICTURE, image);
+    }
+
+    public void setTotalPosts(int num) {
+        put(KEY_NUM_POSTS, num);
+    }
+
+    public int getTotalPosts() {return getInt(KEY_NUM_POSTS); }
+
+    public void incrementPosts() {
+        put(KEY_NUM_POSTS, 1 + getInt(KEY_NUM_POSTS));
+        saveInBackground();
     }
 
 }
