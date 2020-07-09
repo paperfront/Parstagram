@@ -91,6 +91,7 @@ public class ComposeFragment extends Fragment {
         binding = FragmentComposeBinding.bind(view);
         bindElements();
         setupButtons();
+        launchCamera();
     }
 
     private void bindElements() {

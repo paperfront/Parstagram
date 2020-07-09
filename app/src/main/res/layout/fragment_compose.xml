@@ -6,23 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-    <EditText
-        android:id="@+id/etDescription"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/std_height"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:hint="@string/description"></EditText>
-
     <Button
         android:id="@+id/btTakePicture"
         android:layout_width="match_parent"
         android:layout_height="@dimen/std_height"
-        android:layout_below="@id/etDescription"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/take_picture"></Button>
+        android:text="@string/retake_picture"></Button>
 
     <ImageView
         android:id="@+id/ivPicture"
@@ -33,11 +23,21 @@
 
     </ImageView>
 
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_below="@id/ivPicture"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/std_height"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:hint="@string/description"></EditText>
+
     <Button
         android:id="@+id/btSubmit"
         android:layout_width="match_parent"
         android:layout_height="@dimen/std_height"
-        android:layout_below="@id/ivPicture"
+        android:layout_below="@id/etDescription"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="@string/submit"></Button>

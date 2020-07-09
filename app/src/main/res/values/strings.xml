@@ -14,7 +14,7 @@
     <string name="login">Login</string>
     <string name="sign_up">Sign Up</string>
     <string name="description">Description...</string>
-    <string name="take_picture">Take Picture</string>
+    <string name="retake_picture">Retake Picture</string>
     <string name="submit">Submit</string>
     <string name="home">Home</string>
     <string name="new_post">New Post</string>

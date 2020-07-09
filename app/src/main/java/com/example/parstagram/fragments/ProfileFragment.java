@@ -1,47 +1,40 @@
 package com.example.parstagram.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.paging.LivePagedListBuilder;
-import androidx.paging.PagedList;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.parstagram.R;
 import com.example.parstagram.activities.LoginActivity;
 import com.example.parstagram.adapters.PostAdapter;
-import com.example.parstagram.databinding.FragmentHomeBinding;
 import com.example.parstagram.databinding.FragmentProfileBinding;
 import com.example.parstagram.databinding.TextviewCounterBinding;
 import com.example.parstagram.helpers.ImageUtils;
-import com.example.parstagram.models.ParseDataSourceFactory;
 import com.example.parstagram.models.ParseGridDataSourceFactory;
 import com.example.parstagram.models.Post;
 import com.example.parstagram.models.User;
@@ -50,7 +43,6 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.io.File;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -59,21 +51,20 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment {
-
-    private FragmentProfileBinding binding;
+public class ProfileFragment extends Fragment implements EditProfileDialogFragment.EditProfileDialogListener {
 
     public static final String TAG = "ProfileFragment";
     public static final String KEY_PROFILE = "profile";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private static final String PHOTO_FILENAME = "profile.jpg";
-
-    private TextView tvDescription;
-    private TextView tvUsername;
     TextviewCounterBinding postsBinding;
     TextviewCounterBinding followersBinding;
     TextviewCounterBinding followingBinding;
+    private FragmentProfileBinding binding;
+    private TextView tvDescription;
+    private TextView tvUsername;
     private Button btLogout;
+    private Button btEditProfile;
     private ImageView ivProfilePicture;
     private RecyclerView rvGrid;
     private PostAdapter adapter;
@@ -91,7 +82,7 @@ public class ProfileFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-
+     *
      * @return A new instance of fragment ProfileFragment.
      */
     public static ProfileFragment newInstance() {
@@ -130,6 +121,7 @@ public class ProfileFragment extends Fragment {
         followingBinding = binding.tvCounterFollowing;
         rvGrid = binding.rvGrid;
         userButtonsHolder = binding.userButtonsHolder;
+        btEditProfile = binding.btEditProfile;
     }
 
     private void setupElements() {
@@ -177,7 +169,7 @@ public class ProfileFragment extends Fragment {
 
     private void setupText() {
         tvUsername.setText(currentUser.getUsername());
-        tvDescription.setText("Sample Description");
+        tvDescription.setText(currentUser.getDescription());
     }
 
     private void setupImage() {
@@ -225,6 +217,12 @@ public class ProfileFragment extends Fragment {
                     getActivity().finish();
                 }
             });
+            btEditProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showEditDialog();
+                }
+            });
         } else {
             userButtonsHolder.setVisibility(View.GONE);
         }
@@ -252,5 +250,20 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void showEditDialog() {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        EditProfileDialogFragment editNameDialogFragment = EditProfileDialogFragment.newInstance();
+        // SETS the target fragment for use later when sending results
+        editNameDialogFragment.setTargetFragment(ProfileFragment.this, 300);
+        editNameDialogFragment.show(fm, "fragment_edit_profile");
+    }
+
+    // This is called when the dialog is completed and the results have been passed
+    @Override
+    public void onFinishEditDialog(String inputText) {
+        Log.i(TAG, "Received result from edit profile dialog.");
+        tvDescription.setText(inputText);
     }
 }
