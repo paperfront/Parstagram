@@ -99,6 +99,12 @@ public class LoginActivity extends AppCompatActivity {
         newUser.setDescription("");
         newUser.setTotalPosts(0);
         UserInfo info = new UserInfo();
+        try {
+            info.save();
+        } catch (ParseException e) {
+            Log.e(TAG, "Failed to save user info object.", e);
+        }
+
         newUser.setUserInfo(info);
         int drawableId = getResources().getIdentifier("default_profile", "drawable", getPackageName());
         Drawable d = getDrawable(drawableId);
