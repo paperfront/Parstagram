@@ -44,9 +44,8 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<blockquote class="imgur-embed-pub" lang="en" data-id="a/02j8J7A"><a href="//imgur.com/a/02j8J7A"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
-<img src='https://i.imgur.com/Sco2EMN.mp4' title='Video Walkthrough' width='' alt='Video Walkthrough 1' />
-<img src='https://i.imgur.com/oNKK9y0.mp4' width='' alt='Video Walkthrough 2' />
+<img src='https://i.imgur.com/Sco2EMN.gif' title='Video Walkthrough' width='' alt='Video Walkthrough 1' />
+<img src='https://i.imgur.com/oNKK9y0.gif' width='' alt='Video Walkthrough 2' />
 
 GIF created with [Kap](https://getkap.co/).
 
